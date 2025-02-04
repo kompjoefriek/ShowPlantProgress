@@ -1,4 +1,6 @@
 # Changelog
+## v1.5.1
+- Added option to show time remaining
 ## v1.5.0
 - Created new project from bepinex5plugin template
 - Fix for Ashlands update from rikaakiba
