@@ -1,6 +1,6 @@
 {
   "name": "ShowPlantProgress",
-  "version_number": "1.5.0",
+  "version_number": "1.5.2",
   "website_url": "https://github.com/kompjoefriek/ShowPlantProgress",
   "description": "Shows a plant grow progress when you hover over it. It changes color depending on the progress.",
   "dependencies": [

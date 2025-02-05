@@ -4,7 +4,7 @@
     <TargetFramework>net462</TargetFramework>
     <AssemblyName>ShowPlantProgress</AssemblyName>
     <Product>Show Plant Progress</Product>
-    <Version>1.5.1</Version>
+    <Version>1.5.2</Version>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
     <RestoreAdditionalProjectSources>
@@ -13,8 +13,11 @@
       https://nuget.samboy.dev/v3/index.json
     </RestoreAdditionalProjectSources>
     <RootNamespace>ShowPlantProgress</RootNamespace>
-    <Copyright>Copyright © 2024  KompjoeFriek</Copyright>
+    <Copyright>Copyright © 2025  KompjoeFriek</Copyright>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/kompjoefriek/ShowPlantProgress</RepositoryUrl>
+    <PackageTags>mod;valheim</PackageTags>
+    <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -32,6 +35,10 @@
 
   <ItemGroup>
     <None Update="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Update="thunderstore\icon.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>

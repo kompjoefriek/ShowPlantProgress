@@ -8,6 +8,22 @@ R2ModMan: https://r2modman.com/
 To install this mod, you need to have BepInEx: https://thunderstore.io/c/valheim/p/denikson/BepInExPack_Valheim/
 After installing BepInEx, extract ShowPlantProgress.dll into games install **"\Valheim\BepInEx\plugins"**
 
+## Config
+
+### Global;
+| Config Option | Type | Default Value | Description |
+|:-------------:|:-----------:|:-----------:|:-----------|
+| Enable Mod | bool | true | Enable or disable the mod |
+| Enable Logging | bool | true | Enable or disable logging for this mod |
+
+### Progress;
+| Config Option | Type | Default Value | Description |
+|:-----------:|:-----------:|:-----------:|:-----------|
+| Show Percentage | bool | true | Shows the plant or pickable progress as a percentage when you hover over the plant or pickabe |
+| Show Percentage Color | bool | true | Makes it so the percentage changes color depending on the progress |
+| Show Percentage Decimal Places | int | 2 | The amount of decimal places to show for the percentage |
+| Show Time | bool | false | Show the time when done |
+
 If you have any suggestions, feel free to let me know!
 
 ## Not my code

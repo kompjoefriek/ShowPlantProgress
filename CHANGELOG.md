@@ -1,4 +1,11 @@
 # Changelog
+## v1.5.2
+- Added option to toggle percentage color
+- Show only time when show percentage is disabled and show time is enabled
+- Made sure progress does not go over 100%
+- Added option to log the changes to hover text
+- Moved settings: "Amount of Decimal Places" and "Show Time" are moved from "2 - General" to "2 - Progress"
+- Attempt to read deprecated settings and remove them (NOT WORKING)
 ## v1.5.1
 - Added option to show time remaining
 ## v1.5.0
