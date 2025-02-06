@@ -36,8 +36,9 @@ public class ShowPlantProgressPlugin : BaseUnityPlugin
 	{
 		Logger = base.Logger;
 
+		// Normal configs
 		_configEnableMod = Config.Bind("1 - Global", "Enable Mod", true, "Enable or disable this mod");
-		_configEnableLogging = Config.Bind("1 - Global", "Enable Logging", false, "Enable or disable logging for this mod");
+		_configEnableLogging = Config.Bind("1 - Global", "Enable Mod Logging", false, "Enable or disable logging for this mod");
 
 		_configShowPercentage = Config.Bind("2 - Progress", "Show Percentage", true, "Shows the plant or pickable progress as a percentage when you hover over the plant or pickable");
 		_configShowColorPercentage = Config.Bind("2 - Progress", "Show Percentage Color", true, "Makes it so the percentage changes color depending on the progress");
@@ -45,24 +46,37 @@ public class ShowPlantProgressPlugin : BaseUnityPlugin
 		_configShowTime = Config.Bind("2 - Progress", "Show Time", false, "Show the time when done");
 
 		// Deprecated config
-		bool hasDeprecatedConfigAmountOfDecimals = Config.TryGetEntry<int>("2 - General", "Amount of Decimal Places", out ConfigEntry<int> deprecatedConfigAmountOfDecimals);
-		bool hasDeprecatedConfigShowTime = Config.TryGetEntry<bool>("2 - Progress", "Show Time", out ConfigEntry<bool> deprecatedShowTime);
-		if (hasDeprecatedConfigAmountOfDecimals)
+		Dictionary<ConfigDefinition, string> orphanedEntries = Traverse.Create(Config).Property("OrphanedEntries").GetValue<Dictionary<ConfigDefinition, string>>();
+		if (orphanedEntries != null)
 		{
-			_configAmountOfDecimals.Value = deprecatedConfigAmountOfDecimals.Value;
-			Logger.LogInfo("Removing deprecated config: " + deprecatedConfigAmountOfDecimals.Definition.ToString());
-			if (!Config.Remove(deprecatedConfigAmountOfDecimals.Definition))
+			ConfigDefinition deprecatedConfigAmountOfDecimalsDefinition = new ConfigDefinition("2 - General", "Amount of Decimal Places");
+			ConfigDefinition deprecatedConfigShowTimeDefinition = new ConfigDefinition("2 - General", "Show Time");
+			bool hasDeprecatedConfigAmountOfDecimals = orphanedEntries.TryGetValue(deprecatedConfigAmountOfDecimalsDefinition, out string deprecatedConfigAmountOfDecimalsValue);
+			bool hasDeprecatedConfigShowTime = orphanedEntries.TryGetValue(deprecatedConfigShowTimeDefinition, out string deprecatedShowTimeValue);
+
+			bool didConfigChange = false;
+			if (hasDeprecatedConfigAmountOfDecimals)
 			{
-				Logger.LogWarning("Failed to remove deprecated config: " + deprecatedConfigAmountOfDecimals.Definition.ToString());
+				_configAmountOfDecimals.SetSerializedValue(deprecatedConfigAmountOfDecimalsValue);
+				didConfigChange |= RemoveDeprecatedConfigDefinition(ref orphanedEntries, deprecatedConfigAmountOfDecimalsDefinition);
 			}
-		}
-		if (hasDeprecatedConfigShowTime)
-		{
-			_configShowTime.Value = deprecatedShowTime.Value;
-			Logger.LogInfo("Removing deprecated config: " + deprecatedShowTime.Definition.ToString());
-			if (!Config.Remove(deprecatedShowTime.Definition))
+			if (hasDeprecatedConfigShowTime)
 			{
-				Logger.LogWarning("Failed to remove deprecated config: " + deprecatedShowTime.Definition.ToString());
+				_configAmountOfDecimals.SetSerializedValue(deprecatedShowTimeValue);
+				didConfigChange |= RemoveDeprecatedConfigDefinition(ref orphanedEntries, deprecatedConfigShowTimeDefinition);
+			}
+
+			if (_configEnableLogging.Value)
+			{
+				foreach (KeyValuePair<ConfigDefinition, string> entry in orphanedEntries)
+				{
+					Logger.LogWarning("Orphaned config: " + entry.Key.ToString());
+				}
+			}
+
+			if (didConfigChange)
+			{
+				Config.Save();
 			}
 		}
 
@@ -76,6 +90,16 @@ public class ShowPlantProgressPlugin : BaseUnityPlugin
 	private void OnDestroy()
 	{
 		_harmony?.UnpatchSelf();
+	}
+
+	private static bool RemoveDeprecatedConfigDefinition(ref Dictionary<ConfigDefinition, string> entries, ConfigDefinition definition)
+	{
+		if (!entries.Remove(definition))
+		{
+			Logger.LogWarning("Failed to remove deprecated config: " + definition.ToString());
+			return false;
+		}
+		return true;
 	}
 
 	private static string GetColorStringFromPercentage(double percentage)
