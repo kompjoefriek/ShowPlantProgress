@@ -17,6 +17,7 @@
     <RepositoryUrl>https://github.com/kompjoefriek/ShowPlantProgress</RepositoryUrl>
     <PackageTags>mod;valheim</PackageTags>
     <PackageIcon>icon.png</PackageIcon>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
   </PropertyGroup>
 
   <ItemGroup>
