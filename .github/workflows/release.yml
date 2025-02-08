@@ -25,7 +25,7 @@ jobs:
     - name: Read files into Github Output
       id: read-files
       run: |
-        echo "manifest-thunderstore=`cat thunderstore/manifest.json` >> "$GITHUB_OUTPUT"
+        echo "manifest-thunderstore=$(cat thunderstore/manifest.json)" >> $GITHUB_OUTPUT
       
     - name: Get version manifest thunderstore
       run: |
