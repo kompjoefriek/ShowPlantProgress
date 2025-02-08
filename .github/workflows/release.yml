@@ -83,7 +83,7 @@ jobs:
         cp CHANGELOG.md package/
         cp thunderstore/manifest.json package/
         cp thunderstore/icon.png package/
-        cp bin\Release\net48\${{ env.MOD_NAME }}.dll package/
+        cp bin/Release/net48/${{ env.MOD_NAME }}.dll package/
 
     - name: Create package
       run: |
