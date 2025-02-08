@@ -77,7 +77,7 @@ jobs:
 
     - name: Prepare for package
       run: |
-        rm package -r
+        rm package -r -f
         mkdir package
         cp README.md package/
         cp CHANGELOG.md package/
@@ -121,7 +121,7 @@ jobs:
 
     - name: Post Package
       run: |
-        rm package -r
+        rm package -r -f
 
   deploy_thunderstore:
     needs: build_release
