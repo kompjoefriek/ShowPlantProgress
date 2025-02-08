@@ -9,9 +9,7 @@ on:
 
 env:
   MOD_NAME: ShowPlantProgress
-  PACKAGE_NAME: ${{ env.MOD_NAME }}_v${{ github.ref_name }}.zip
-  MANIFECT_VERSION: NotSet # Set during Get versions step
-  PROJECT_VERSION: NotSet # Set during Get versions step
+  PACKAGE_NAME: ShowPlantProgress_v${{ github.ref_name }}.zip
 
 jobs:
   build_release:
@@ -28,10 +26,12 @@ jobs:
       run: |
         echo "Github tag = ${{ github.ref_name }}"
         package_content=`cat thunderstore/manifest.json`
-        echo "MANIFECT_VERSION=v${{fromJson($content).version_number}}" >> $GITHUB_ENV
-        echo "Manifest version = ${{ env.MANIFECT_VERSION }}"
-        echo "PROJECT_VERSION=v$(cat ${{ env.MOD_NAME }}.csproj | grep -Po '(?<=Version>)[\d\.]+(?=</Version>)')" >> $GITHUB_ENV
-        echo "Project version = ${{ env.PROJECT_VERSION }}"
+        manifest_version=v${{fromJson($content).version_number}}
+        echo "Manifest version = $manifest_version"
+        echo "MANIFECT_VERSION=$manifest_version" >> $GITHUB_ENV
+        project_version=v$(cat ${{ env.MOD_NAME }}.csproj | grep -Po '(?<=Version>)[\d\.]+(?=</Version>)')
+        echo "Project version = $project_version"
+        echo "PROJECT_VERSION=$project_version" >> $GITHUB_ENV
 
     - name: Version check manifest
       if: ${{ github.ref_name != env.MANIFECT_VERSION }}
