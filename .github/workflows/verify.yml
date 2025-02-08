@@ -8,7 +8,14 @@ name: Verify
 
 on:
   push:
+    branches:
+    - '**'
+    paths:
+    - '**.cs'
+    - '**.csproj'
   pull_request:
+    branches:
+    - '**'
     paths:
     - '**.cs'
     - '**.csproj'
