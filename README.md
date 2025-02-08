@@ -1,7 +1,7 @@
 # Show Plant Progress
 This Valheim mod shows a plant grow progress when you hover over it. It changes color depending on the progress. Super simple, that's it.
 
-![icon](thunderstore/icon.png "icon")
+![](thunderstore/icon.png)
 
 ## Automatic Installation
 R2ModMan: https://r2modman.com/
@@ -38,4 +38,4 @@ Installed VS2022 with:
 Workloads:
 - .NET desktop environment
 Individual components:
-- .NET Framework 4.6.2
+- .NET Framework 8.0.x
