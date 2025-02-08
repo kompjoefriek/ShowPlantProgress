@@ -1,0 +1,129 @@
+# Build .NET project, Package project and create Github release with the package attached
+
+name: Release
+
+on: 
+  push:
+    tags:
+    - '*'
+
+jobs:
+  build_release:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Get versions
+      run: |
+        echo "Github tag version = ${{ github.ref_name }}"
+        echo "MANIFECT_JSON=$(cat thunderstore/manifest.json)" >> $GITHUB_ENV
+        echo "MANIFECT_VERSION=v${{fromJson(env.MANIFECT_JSON).version_number}}" >> $GITHUB_ENV
+        echo "Manifest version = ${{ env.MANIFECT_VERSION }}"
+        echo "PROJECT_VERSION=v$(cat ShowPlantProgress.csproj | grep -Po '(?<=Version>)[\d\.]+(?=</Version>)')" >> $GITHUB_ENV
+        echo "Project version = ${{ env.PROJECT_VERSION }}"
+        echo "PACKAGE_NAME=ShowPlantProgress_v${{ github.ref_name }}.zip"
+
+    - name: Version check manifest
+      if: ${{ github.ref_name != env.MANIFECT_JSON }}
+      run: | 
+        echo "Manifest version does not match tag version! ${{ github.ref_name }} != ${{ env.MANIFECT_JSON }}"
+        exit 1
+
+    - name: Version check project
+      if: ${{ github.ref_name != env.PROJECT_VERSION }}
+      run: | 
+        echo "Project version does not match tag version! ${{ github.ref_name }} != ${{ env.PROJECT_VERSION }}"
+        exit 1
+
+    - name: Extract Changelog
+      id: changelog
+      uses: nickohold/changelog-version-extractor@v1.0.0
+      with:
+        version_prefix: "## "
+        version: "${{ github.ref_name }}"
+        changelog_path: "./CHANGELOG.md"
+
+    - name: Print Changelog
+      run: echo "Changes:\n${{ steps.changelog.outputs.changelog }}"
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+        cache: true
+
+    - name: Restore dependencies
+      run: dotnet restore --locked-mode
+
+    - name: Build
+      run: dotnet build --no-restore --configuration Release
+
+    - name: Prepare for package
+      run: |
+        rm package -r
+        mkdir package
+        cp README.md package/
+        cp CHANGELOG.md package/
+        cp thunderstore/manifest.json package/
+        cp thunderstore/icon.png package/
+        cp bin\Release\net48\ShowPlantProgress.dll package/
+
+    - name: Create package
+      run: |
+        cd ./package/
+        zip -9 ${{ env.PACKAGE_NAME }} *.*
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: ${{ github.ref }}
+        body: "Changes:\n${{ steps.changelog.outputs.changelog }}"
+        draft: false
+        prerelease: false
+    - name: Upload Release Asset
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: ./package/${{ env.PACKAGE_NAME }}
+        asset_name: my-artifact.zip
+        asset_content_type: application/zip
+
+    - name: Post Package
+      run: |
+        rm package -r
+
+#  deploy:
+#    needs: build_release
+
+#    runs-on: ubuntu-latest
+#    permissions:
+#      contents: read
+
+#    steps:
+#    # Upload to Thunderstore
+#    - uses: GreenTF/upload-thunderstore-package@v4.3
+#      with:
+#        namespace: KompjoeFriek # the thunderstore 'team' to publish under
+#        description: Shows a plant grow progress when you hover over it. It changes color depending on the progress. 
+#        token: ${{ secrets.MY_SUPER_SECRET_TOKEN_NAME }}
+#        name: ShowPlantProgress # the name of the package
+#        version: ${{ github.ref_name }} # Use the tag as the package version
+#        community: Valheim
+#        repo: valheim.thunderstore.io
+#        categories: | # <-- notice this pipe character
+#          mods
+#          client-side
+#          utility
+#          ashlands-update
