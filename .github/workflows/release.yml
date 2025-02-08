@@ -9,7 +9,7 @@ on:
 
 env:
   MOD_NAME: ShowPlantProgress
-  PACKAGE_NAME: ShowPlantProgress_v${{ github.ref_name }}.zip
+  PACKAGE_NAME: ShowPlantProgress_${{ github.ref_name }}.zip
 
 jobs:
   build_release:
@@ -22,14 +22,15 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Read files into Github Output
-      id: read-files
-      run: |
-        echo "manifest-thunderstore=$(cat thunderstore/manifest.json)" >> $GITHUB_OUTPUT
+    - name: Read manifest thunderstore
+      id: manifest-thunderstore
+      uses: ActionsTools/read-json-action@main
+      with:
+        file_path: "thunderstore/manifest.json"
       
     - name: Get version manifest thunderstore
       run: |
-        manifest_version=v${{fromJson(steps.read-files.outputs.manifest-thunderstore).version_number}}
+        manifest_version=v${{ steps.manifest-thunderstore.outputs.version_number }}
         echo "Manifest version = $manifest_version"
         echo "MANIFEST_VERSION=$manifest_version" >> $GITHUB_ENV
 
