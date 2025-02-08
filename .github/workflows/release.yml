@@ -7,6 +7,12 @@ on:
     tags:
     - '*'
 
+env:
+  MOD_NAME: ShowPlantProgress
+  PACKAGE_NAME: ${{ env.MOD_NAME }}_v${{ github.ref_name }}.zip
+  MANIFECT_VERSION: NotSet # Set during Get versions step
+  PROJECT_VERSION: NotSet # Set during Get versions step
+
 jobs:
   build_release:
 
@@ -20,18 +26,17 @@ jobs:
 
     - name: Get versions
       run: |
-        echo "Github tag version = ${{ github.ref_name }}"
-        echo "MANIFECT_JSON=$(cat thunderstore/manifest.json)" >> $GITHUB_ENV
-        echo "MANIFECT_VERSION=v${{fromJson(env.MANIFECT_JSON).version_number}}" >> $GITHUB_ENV
+        echo "Github tag = ${{ github.ref_name }}"
+        package_content=`cat thunderstore/manifest.json`
+        echo "MANIFECT_VERSION=v${{fromJson($content).version_number}}" >> $GITHUB_ENV
         echo "Manifest version = ${{ env.MANIFECT_VERSION }}"
-        echo "PROJECT_VERSION=v$(cat ShowPlantProgress.csproj | grep -Po '(?<=Version>)[\d\.]+(?=</Version>)')" >> $GITHUB_ENV
+        echo "PROJECT_VERSION=v$(cat ${{ env.MOD_NAME }}.csproj | grep -Po '(?<=Version>)[\d\.]+(?=</Version>)')" >> $GITHUB_ENV
         echo "Project version = ${{ env.PROJECT_VERSION }}"
-        echo "PACKAGE_NAME=ShowPlantProgress_v${{ github.ref_name }}.zip"
 
     - name: Version check manifest
-      if: ${{ github.ref_name != env.MANIFECT_JSON }}
+      if: ${{ github.ref_name != env.MANIFECT_VERSION }}
       run: | 
-        echo "Manifest version does not match tag version! ${{ github.ref_name }} != ${{ env.MANIFECT_JSON }}"
+        echo "Manifest version does not match tag version! ${{ github.ref_name }} != ${{ env.MANIFECT_VERSION }}"
         exit 1
 
     - name: Version check project
@@ -71,12 +76,18 @@ jobs:
         cp CHANGELOG.md package/
         cp thunderstore/manifest.json package/
         cp thunderstore/icon.png package/
-        cp bin\Release\net48\ShowPlantProgress.dll package/
+        cp bin\Release\net48\${{ env.MOD_NAME }}.dll package/
 
     - name: Create package
       run: |
-        cd ./package/
-        zip -9 ${{ env.PACKAGE_NAME }} *.*
+        zip -9 package/${{ env.PACKAGE_NAME }} package/*.*
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ env.PACKAGE_NAME }}
+        path: package/${{ env.PACKAGE_NAME }}
+        retention-days: 5
 
     - name: Create Release
       id: create_release
@@ -89,6 +100,7 @@ jobs:
         body: "Changes:\n${{ steps.changelog.outputs.changelog }}"
         draft: false
         prerelease: false
+
     - name: Upload Release Asset
       id: upload-release-asset 
       uses: actions/upload-release-asset@v1
@@ -96,30 +108,36 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: ./package/${{ env.PACKAGE_NAME }}
-        asset_name: my-artifact.zip
+        asset_path: package/${{ env.PACKAGE_NAME }}
+        asset_name: ${{ env.PACKAGE_NAME }}
         asset_content_type: application/zip
 
     - name: Post Package
       run: |
         rm package -r
 
-#  deploy:
-#    needs: build_release
+  deploy_thunderstore:
+    needs: build_release
 
-#    runs-on: ubuntu-latest
-#    permissions:
-#      contents: read
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
-#    steps:
+    steps:
+
+    - name: Download the release artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: ${{ env.PACKAGE_NAME }}
+
 #    # Upload to Thunderstore
 #    - uses: GreenTF/upload-thunderstore-package@v4.3
 #      with:
 #        namespace: KompjoeFriek # the thunderstore 'team' to publish under
-#        description: Shows a plant grow progress when you hover over it. It changes color depending on the progress. 
 #        token: ${{ secrets.MY_SUPER_SECRET_TOKEN_NAME }}
-#        name: ShowPlantProgress # the name of the package
+#        name: ${{ env.MOD_NAME }} # the name of the package
 #        version: ${{ github.ref_name }} # Use the tag as the package version
+#        file: ${{ env.PACKAGE_NAME }}
 #        community: Valheim
 #        repo: valheim.thunderstore.io
 #        categories: | # <-- notice this pipe character
