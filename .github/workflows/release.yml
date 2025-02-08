@@ -26,7 +26,7 @@ jobs:
       run: |
         echo "Github tag = ${{ github.ref_name }}"
         package_content=`cat thunderstore/manifest.json`
-        manifest_version=v${{fromJson($content).version_number}}
+        manifest_version=v${{fromJson($package_content).version_number}}
         echo "Manifest version = $manifest_version"
         echo "MANIFECT_VERSION=$manifest_version" >> $GITHUB_ENV
         project_version=v$(cat ${{ env.MOD_NAME }}.csproj | grep -Po '(?<=Version>)[\d\.]+(?=</Version>)')
