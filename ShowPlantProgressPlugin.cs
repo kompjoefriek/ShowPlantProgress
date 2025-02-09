@@ -12,7 +12,7 @@ namespace ShowPlantProgress;
 [HarmonyPatch]
 public class ShowPlantProgressPlugin : BaseUnityPlugin
 {
-	internal const string _modVersion = "1.5.2";
+	internal const string _modVersion = "1.5.3";
 	internal const string _modDescription = "Show Plant Progress";
 	internal const string _modUid = "kompjoefriek.showplantprogress";
 
