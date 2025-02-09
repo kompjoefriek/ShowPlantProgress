@@ -87,7 +87,9 @@ jobs:
 
     - name: Create package
       run: |
-        zip -9 package/${{ env.PACKAGE_NAME }} package/*.*
+        cd ./package
+        zip -9 ${{ env.PACKAGE_NAME }} *.*
+        cd ./
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
@@ -133,9 +135,13 @@ jobs:
     steps:
 
     - name: Download the release artifact
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4
       with:
         name: ${{ env.PACKAGE_NAME }}
+
+    - name: Print workspace
+      run: |
+        ls -la
 
 #    # Upload to Thunderstore
 #    - uses: GreenTF/upload-thunderstore-package@v4.3
