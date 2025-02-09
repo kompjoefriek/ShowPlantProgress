@@ -107,7 +107,7 @@ jobs:
         tag_name: ${{ github.ref }}
         release_name: ${{ github.ref }}
         body: "Changes:\n${{ steps.changelog.outputs.changelog }}"
-        draft: true
+        draft: false
         prerelease: false
 
     - name: Upload Release Asset
@@ -139,22 +139,17 @@ jobs:
       with:
         name: ${{ env.PACKAGE_NAME }}
 
-    - name: Print workspace
-      run: |
-        ls -la
-
-#    # Upload to Thunderstore
-#    - uses: GreenTF/upload-thunderstore-package@v4.3
-#      with:
-#        namespace: KompjoeFriek # the thunderstore 'team' to publish under
-#        token: ${{ secrets.MY_SUPER_SECRET_TOKEN_NAME }}
-#        name: ${{ env.MOD_NAME }} # the name of the package
-#        version: ${{ github.ref_name }} # Use the tag as the package version
-#        file: ${{ env.PACKAGE_NAME }}
-#        community: Valheim
-#        repo: valheim.thunderstore.io
-#        categories: | # <-- notice this pipe character
-#          mods
-#          client-side
-#          utility
-#          ashlands-update
+    - uses: GreenTF/upload-thunderstore-package@v4.3
+      with:
+        namespace: KompjoeFriek # the thunderstore 'team' to publish under
+        token: ${{ secrets.THUNDERSTORE_TOKEN }}
+        name: ${{ env.MOD_NAME }} # the name of the package
+        version: ${{ github.ref_name }} # Use the tag as the package version
+        file: ${{ env.PACKAGE_NAME }}
+        community: Valheim
+        repo: valheim.thunderstore.io
+        categories: | # <-- notice this pipe character
+          mods
+          client-side
+          utility
+          ashlands-update
