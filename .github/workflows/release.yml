@@ -146,7 +146,7 @@ jobs:
         name: ${{ env.MOD_NAME }} # the name of the package
         version: ${{ github.ref_name }} # Use the tag as the package version
         file: ${{ env.PACKAGE_NAME }}
-        community: Valheim
+        community: valheim
         repo: valheim.thunderstore.io
         categories: | # <-- notice this pipe character
           mods

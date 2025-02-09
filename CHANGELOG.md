@@ -1,5 +1,5 @@
 # Changelog
-## v1.5.3 (in development)
+## v1.5.3
 - Time now includes hours when there is only a single hour to display
 ## v1.5.2
 - Added option to toggle percentage color
