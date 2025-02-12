@@ -1,4 +1,6 @@
 # Changelog
+## v1.5.4
+- Allow enabling and disabling mod from config at runtime
 ## v1.5.3
 - Time now includes hours when there is only a single hour to display
 ## v1.5.2
@@ -14,7 +16,7 @@
 - Created new project from bepinex5plugin template
 - Fix for Ashlands update from rikaakiba
 ## v1.4.0
-- Added a coloured percentage toggle
+- Added a colored percentage toggle
 - Made the string replacement a little better
 ## v1.3.0
 - Reimplement bushes, found a fix to the progress resetting, turns out it's an actual issue with Valheim itself. Thanks to `3d_printing_dm` from [Reddit](https://old.reddit.com/r/valheim/comments/lzcxr3/bug_in_berry_bush_pick_time_code/).

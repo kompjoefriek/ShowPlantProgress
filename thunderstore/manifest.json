@@ -1,9 +1,9 @@
 {
-  "name": "ShowPlantProgress",
-  "version_number": "1.5.3",
-  "website_url": "https://github.com/kompjoefriek/ShowPlantProgress",
-  "description": "Shows a plant grow progress when you hover over it. It changes color depending on the progress.",
   "dependencies": [
     "denikson-BepInExPack_Valheim-5.4.2202"
-  ]
+  ],
+  "description": "Shows a plant grow progress when you hover over it. It changes color depending on the progress.",
+  "name": "ShowPlantProgress",
+  "version_number": "1.5.4",
+  "website_url": "https://github.com/kompjoefriek/ShowPlantProgress"
 }

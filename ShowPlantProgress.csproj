@@ -4,7 +4,7 @@
     <TargetFramework>net48</TargetFramework>
     <AssemblyName>ShowPlantProgress</AssemblyName>
     <Product>Show Plant Progress</Product>
-    <Version>1.5.3</Version>
+    <Version>1.5.4</Version>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
     <RestoreAdditionalProjectSources>
