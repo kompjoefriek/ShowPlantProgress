@@ -1,5 +1,6 @@
 # Changelog
 ## v1.5.4
+- Deep North update
 - Allow enabling and disabling mod from config at runtime
 ## v1.5.3
 - Time now includes hours when there is only a single hour to display
